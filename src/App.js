@@ -1,15 +1,45 @@
 import './App.css';
-import {useState} from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from 'react-router-dom';
+
+import {Login} from './login';
+import {Register} from './register';
+import {Todo} from './todo';
+import {ProvideAuth} from "./auth";
+import React from "react";
 
 function App() {
-  const [current, setCurrent] = useState('home');
   return (
-    <div className="app">
-      <Navbar router={setCurrent}/>
-      <Router current={current}/>
-    </div>
+    <ProvideAuth>
+      <Router>
+        <div className="app">
+          <Navbar/>
+          <div className="main-content">
+            <Switch>
+              <Route exact path="/">
+                <Home/>
+              </Route>
+              <Route exact path="/login">
+                <Login/>
+              </Route>
+              <Route exact path="/register">
+                <Register/>
+              </Route>
+              <Route exact path="/todo">
+                <Todo/>
+              </Route>
+            </Switch>
+          </div>
+        </div>
+      </Router>
+    </ProvideAuth>
   );
 }
+
 
 function Navbar(props) {
   return (
@@ -18,34 +48,8 @@ function Navbar(props) {
         Obligatory Todo
       </div>
       <div>
-        <button className="navbar-button"
-                onClick={() => {
-                  props.router('login')
-                }}>
-          LOGIN
-        </button>
+        <Link to="/login">LOGIN</Link>
       </div>
-    </div>
-  );
-}
-
-function Router(props) {
-  let component = {};
-
-  switch (props.current) {
-    case 'home':
-      component = <Home/>;
-      break;
-    case 'login':
-      component = <Login/>;
-      break;
-    default:
-      component = <Error/>
-  }
-
-  return (
-    <div className="main-content">
-      {component}
     </div>
   );
 }
@@ -59,38 +63,8 @@ function Home(props) {
   );
 }
 
-function Login(props) {
-  return (
-    <div>
-      <h1>Login to Obligatory Todo</h1>
-      <LoginBox/>
-    </div>);
-}
-
-function LoginBox(props) {
-  function handleLogin() {
-    console.log("Login event received");
-  }
-
-  return (
-    <div className="login-box">
-      <div className="login-box-row">
-        <input type="text" placeholder="Username"/>
-      </div>
-      <div className="login-box-row">
-        <input type="password" placeholder="Password"/>
-      </div>
-
-      <div className="login-box-row">
-        <button className="login-button" onClick={() => handleLogin()}>LOGIN</button>
-      </div>
-    </div>
-  );
-}
-
-
 function Error(props) {
   return (<div><h1>Uh oh</h1><h3>Something went wrong...</h3></div>);
-};
+}
 
 export default App;

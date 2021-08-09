@@ -13,5 +13,5 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OBLIGATORY_TODO_CEA62 }}'
-          projectId: obligatory-todo-cea62
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OBLIGATORY_TODO_88FF7 }}'
+          projectId: obligatory-todo-88ff7
