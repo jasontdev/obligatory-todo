@@ -23,44 +23,65 @@ function Todo(props) {
 }
 
 function TodoList(props) {
-  const [todoItems, setTodoItems] = useState(['']);
+  const [todoItems, setTodoItems] = useState([]);
   const auth = useAuth();
 
   useEffect(() => {
     let todoItemsDBRef =
       firebase.database().ref('/users/' + auth.user.uid + '/todoItems');
 
-    const onValueChange = (snapshot) => {
-      const data = snapshot.val();
-      setTodoItems(data);
+    const onChildAdded = (data) => {
+      setTodoItems(prevState => [...prevState, data])
     }
+    todoItemsDBRef.on('child_added', onChildAdded);
 
-    todoItemsDBRef.on('value', onValueChange);
+    const onChildRemoved = (data) => {
+      setTodoItems( prevState =>
+        prevState.filter((item) => item.key !== data.key));
+    }
+    todoItemsDBRef.on('child_removed', onChildRemoved);
 
     return (() => {
-      todoItemsDBRef.off('value', onValueChange);
+      todoItemsDBRef.off('child_added', onChildAdded);
+      todoItemsDBRef.off('child_removed', onChildRemoved);
     });
   }, [auth.user.uid]);
 
-  const todoListItems = todoItems.map((item) => <li key={item}>{item}</li>);
   return (
     <div>
       <ul className="todo-list">
-        {todoListItems}
+        { todoItems.map((data) => <TodoItem key={data.key} value={data.val()} />)}
       </ul>
     </div>
   );
 }
 
+function TodoItem(props) {
+  return (
+      <li className="todo-item" key={props.key}>{props.value}</li>
+  );
+}
+
 function AddTodo(props) {
+
+  const [newTodoItem, setNewTodoItem] = useState('');
+  const auth = useAuth();
+  function submitNewTodo(value) {
+    if(newTodoItem !== '') {
+      const newDBTodoItem = firebase.database().ref('/users/' + auth.user.uid + '/todoItems').push();
+      newDBTodoItem.set(newTodoItem).then(() => setNewTodoItem(''));
+    }
+  }
 
   return (
     <div className="form-box">
       <div className="form-box-row">
-        <input type="text" placeholder="New to-do item"/>
+        <input type="text" placeholder="New to-do item" value={newTodoItem}
+        onChange={(e) => setNewTodoItem(e.target.value)}/>
       </div>
       <div className="form-box-row">
-        <button className="form-button">ADD
+        <button className="form-button"
+                onClick={(e) => submitNewTodo()}>ADD
         </button>
       </div>
     </div>

@@ -1,11 +1,11 @@
 import './App.css';
+
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Link
 } from 'react-router-dom';
-
 import {Login} from './login';
 import {Register} from './register';
 import {Todo} from './todo';
@@ -61,10 +61,6 @@ function Home(props) {
       <p>What web developer portfolio could be complete without a to-do application?</p>
     </div>
   );
-}
-
-function Error(props) {
-  return (<div><h1>Uh oh</h1><h3>Something went wrong...</h3></div>);
 }
 
 export default App;
