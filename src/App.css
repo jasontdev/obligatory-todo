@@ -70,6 +70,7 @@ input {
 .todo-list {
     list-style: none;
     padding-left: 0;
+    min-width: 300px;
 }
 
 .todo-item {

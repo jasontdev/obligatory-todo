@@ -4,12 +4,12 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link, Redirect, useLocation
 } from 'react-router-dom';
 import {Login} from './login';
 import {Register} from './register';
 import {Todo} from './todo';
-import {ProvideAuth} from "./auth";
+import {ProvideAuth, useAuth} from "./auth";
 import React from "react";
 
 function App() {
@@ -40,15 +40,28 @@ function App() {
   );
 }
 
-
 function Navbar(props) {
+
+  const auth = useAuth();
+  const location = useLocation();
+
+  function navbarButton() {
+    if(auth.user) {
+      if(location.pathname === '/todo') {
+        return <Link className="navbar-button" to="/">LOGOUT</Link>
+      }
+      return <Link className="navbar-button" to="/todo">TODOS</Link>
+    } else {
+      return <Link className="navbar-button" to="/login">LOGIN</Link>
+    }
+  }
   return (
     <div className="navbar">
       <div>
         Obligatory Todo
       </div>
       <div>
-        <Link to="/login">LOGIN</Link>
+        {navbarButton()}
       </div>
     </div>
   );

@@ -31,7 +31,8 @@ function TodoList(props) {
       firebase.database().ref('/users/' + auth.user.uid + '/todoItems');
 
     const onChildAdded = (data) => {
-      setTodoItems(prevState => [...prevState, data])
+      setTodoItems(prevState => [...prevState, data]
+        .sort((a, b) => a.val().position - b.val().position))
     }
     todoItemsDBRef.on('child_added', onChildAdded);
 
@@ -50,7 +51,7 @@ function TodoList(props) {
   return (
     <div>
       <ul className="todo-list">
-        { todoItems.map((data) => <TodoItem key={data.key} value={data.val()} />)}
+        { todoItems.map((data) => <TodoItem key={data.key} item={data} />)}
       </ul>
     </div>
   );
@@ -58,26 +59,36 @@ function TodoList(props) {
 
 function TodoItem(props) {
   return (
-      <li className="todo-item" key={props.key}>{props.value}</li>
+      <li className="todo-item">{props.item.val().title}</li>
   );
 }
 
 function AddTodo(props) {
 
-  const [newTodoItem, setNewTodoItem] = useState('');
+  const [newTodoItemDescription, setNewTodoItemDescription] = useState('');
   const auth = useAuth();
   function submitNewTodo(value) {
-    if(newTodoItem !== '') {
-      const newDBTodoItem = firebase.database().ref('/users/' + auth.user.uid + '/todoItems').push();
-      newDBTodoItem.set(newTodoItem).then(() => setNewTodoItem(''));
+    if(newTodoItemDescription !== '') {
+      const todoItemsRef = firebase.database()
+        .ref('/users/' + auth.user.uid + '/todoItems');
+
+     let numTodoItems = 0;
+     todoItemsRef.once('value',function(data) {numTodoItems = data.numChildren()});
+
+     const newTodoItemRef = todoItemsRef.push();
+     newTodoItemRef.set({
+       title: newTodoItemDescription,
+       order: numTodoItems + 1,
+       complete: false
+     }).then(() => setNewTodoItemDescription(''));
     }
   }
 
   return (
     <div className="form-box">
       <div className="form-box-row">
-        <input type="text" placeholder="New to-do item" value={newTodoItem}
-        onChange={(e) => setNewTodoItem(e.target.value)}/>
+        <input type="text" placeholder="New to-do item" value={newTodoItemDescription}
+        onChange={(e) => setNewTodoItemDescription(e.target.value)}/>
       </div>
       <div className="form-box-row">
         <button className="form-button"
