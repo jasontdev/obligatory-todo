@@ -75,7 +75,7 @@ input {
 
 .todo-item {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
@@ -84,12 +84,11 @@ input {
     margin-bottom: 3px;
 }
 
+.todo-item-title {
+    margin-left: 5px;
+}
+
 .todo-item-complete {
     border-color: lightgray;
     color: lightgray;
-}
-
-.todo-item-row {
-    display: flex;
-    justify-content: space-between;
 }

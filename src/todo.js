@@ -86,10 +86,10 @@ function TodoItem(props) {
     return (
         <li>
             <div className={props.className}>
-                <div>{props.item.val().title}</div>
                 <button className="form-button" onClick={() => handleCompleteButtonClick()}>
                     <FontAwesomeIcon icon={faCheck}/>
                 </button>
+                <div className="todo-item-title">{props.item.val().title}</div>
             </div>
         </li>
     );
@@ -125,10 +125,10 @@ function AddTodo(props) {
                 <input type="text" placeholder="New to-do item" value={newTodoItemDescription}
                        onChange={(e) => setNewTodoItemDescription(e.target.value)}/>
             </div>
+            <button className="form-button"
+                    onClick={(e) => submitNewTodo()}><FontAwesomeIcon icon={faPlus}/> ADD
+            </button>
             <div className="form-box-row">
-                <button className="form-button"
-                        onClick={(e) => submitNewTodo()}><FontAwesomeIcon icon={faPlus}/> ADD
-                </button>
             </div>
         </div>
     );
