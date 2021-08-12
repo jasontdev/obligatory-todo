@@ -13,6 +13,8 @@ import {ProvideAuth, useAuth} from "./auth";
 import React from "react";
 
 function App() {
+  document.title = "Obligatory Todo"
+
   return (
     <ProvideAuth>
       <Router>
