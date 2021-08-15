@@ -41,6 +41,17 @@ function TodoList(props) {
     }
     userItemsDBRef.on('child_added', onUserItemsChildAdded);
 
+    const onUserItemsChildRemoved = (data) => {
+      // prevent 'value' event from being triggered
+      firebase.database().ref('/items/' + data.val()).off();
+      firebase.database().ref('/items/' + data.val()).remove();
+
+      // TODO replace with seperate listener for 'value' events on user's items list
+      // trigger rerender without deleted item
+      setTodoItems(prevState => [...prevState].filter((item) => item.key !== data.val()));
+    }
+    userItemsDBRef.on('child_removed', onUserItemsChildRemoved);
+
     const onItemValue = (data) => {
       setTodoItems(prevState => [...prevState].map((item) => item.key === data.key ? data : item));
     }
@@ -63,8 +74,6 @@ function TodoList(props) {
 }
 
 function TodoItem(props) {
-  const auth = useAuth();
-
   function handleCompleteButtonClick() {
     const itemDBRef = firebase.database().ref('/items/' + props.item.key);
     const newItem = {
@@ -84,7 +93,7 @@ function TodoItem(props) {
                              'todo-button-icon-complete' : 'todo-button-icon'}/>
         </button>
         <div className={props.item.val().complete ? 'todo-item-title todo-item-title-complete'
-        : 'todo-item-title'}>{props.item.val().title}</div>
+          : 'todo-item-title'}>{props.item.val().title}</div>
       </div>
     </li>
   );
