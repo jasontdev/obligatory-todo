@@ -84,11 +84,20 @@ input {
     margin-bottom: 3px;
 }
 
-.todo-item-title {
-    margin-left: 5px;
+.todo-item-title-complete {
+    text-decoration: line-through;
+    text-decoration-color: red;
+    text-decoration-thickness: 2px;
 }
 
-.todo-item-complete {
-    border-color: lightgray;
-    color: lightgray;
+.todo-button-icon-complete {
+    color: red;
+}
+
+.todo-button-icon {
+    color: lightgrey;
+}
+
+.todo-item-title {
+    margin-left: 5px;
 }

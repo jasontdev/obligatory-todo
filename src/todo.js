@@ -79,9 +79,12 @@ function TodoItem(props) {
     <li>
       <div className={props.className}>
         <button className="form-button" onClick={() => handleCompleteButtonClick()}>
-          <FontAwesomeIcon icon={faCheck}/>
+          <FontAwesomeIcon icon={faCheck}
+                           className={props.item.val().complete ?
+                             'todo-button-icon-complete' : 'todo-button-icon'}/>
         </button>
-        <div className="todo-item-title">{props.item.val().title}</div>
+        <div className={props.item.val().complete ? 'todo-item-title todo-item-title-complete'
+        : 'todo-item-title'}>{props.item.val().title}</div>
       </div>
     </li>
   );
@@ -93,7 +96,6 @@ function AddTodo(props) {
   const auth = useAuth();
 
   function submitNewTodo(value) {
-
     // add the item
     const itemsDBRef = firebase.database().ref('/items').push();
     itemsDBRef.set({
