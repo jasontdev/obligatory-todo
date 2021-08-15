@@ -29,7 +29,6 @@ function TodoList(props) {
   const auth = useAuth();
 
   useEffect(() => {
-
     const userItemsDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items');
     const onUserItemsChildAdded = (data) => {
       // create listener to connect item with todoItems[]
@@ -37,7 +36,8 @@ function TodoList(props) {
       itemDBRef.on('value', onItemValue);
 
       // add item to todoItems
-      itemDBRef.once('value').then((item) => setTodoItems(prevState => [...prevState, item]));
+      itemDBRef.once('value')
+        .then((item) => setTodoItems(prevState => [...prevState, item]));
     }
     userItemsDBRef.on('child_added', onUserItemsChildAdded);
 

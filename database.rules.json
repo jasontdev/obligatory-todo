@@ -7,6 +7,12 @@
         ".write": "$user_id === auth.uid",
         ".read": "$user_id === auth.uid"
       }
+    },
+    "items": {
+      "$item_id": {
+        ".read": "data.child('user').val() === auth.uid",
+        ".write": "newData.child('user').val() === auth.uid"
+      }
     }
   }
 }
