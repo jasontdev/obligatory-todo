@@ -74,8 +74,6 @@ input {
 }
 
 .todo-item {
-    display: flex;
-    align-items: center;
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
@@ -100,4 +98,23 @@ input {
 
 .todo-item-title {
     margin-left: 5px;
+}
+
+.todo-item-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.todo-item-expand-row {
+    margin-top: 3px;
+    display: flex;
+    justify-content: center;
+}
+
+.todo-item-button {
+    color: black;
+    background-color: transparent;
+    border-style: none;
+    padding: 5px 10px 5px 10px;
+    font-weight: 600;
 }

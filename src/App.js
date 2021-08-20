@@ -4,7 +4,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link, Redirect, useLocation
+  Link, useLocation
 } from 'react-router-dom';
 import {Login} from './login';
 import {Register} from './register';

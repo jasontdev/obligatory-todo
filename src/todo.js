@@ -3,8 +3,9 @@ import {useAuth} from "./auth";
 import firebase from "firebase/app";
 import "firebase/database";
 import {Redirect, Route} from "react-router-dom";
-import {faPlus, faCheck} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {TodoItem} from "./todoItem";
 
 function Todo(props) {
   const auth = useAuth();
@@ -14,7 +15,7 @@ function Todo(props) {
       {auth.user ?
         <div>
           <h1>Todo</h1>
-          <TodoList/>
+          <TodoList />
           <AddTodo/>
         </div>
         :
@@ -29,36 +30,38 @@ function TodoList(props) {
   const auth = useAuth();
 
   useEffect(() => {
-    const userItemsDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items');
-    const onUserItemsChildAdded = (data) => {
-      // create listener to connect item with todoItems[]
-      const itemDBRef = firebase.database().ref('/items/' + data.val());
-      itemDBRef.on('value', onItemValue);
+    const renderItem = (newItem) => {
+      setTodoItems(prevState => {
+        const matchingIndex = prevState.findIndex((prevItem) => prevItem.key === newItem.key);
 
-      // add item to todoItems
-      itemDBRef.once('value')
-        .then((item) => setTodoItems(prevState => [...prevState, item]));
+        if(matchingIndex > -1) {
+          const newState = [...prevState];
+          newState.splice(matchingIndex, 1, newItem);
+          return newState;
+        } else {
+          return [...prevState, newItem]
+        }
+      })
     }
+
+    const onUserItemsChildRemoved = (removedItem) => {
+      const itemDBRef = firebase.database().ref('/items' + removedItem.val())
+      itemDBRef.off('value');
+      setTodoItems(prevState => prevState.filter((item) => item.key !== removedItem.val()));
+    }
+
+    const onUserItemsChildAdded = (newItem) => {
+      const itemDBRef = firebase.database().ref('/items/' + newItem.val());
+      itemDBRef.on('value', renderItem);
+    }
+
+    const userItemsDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items/');
     userItemsDBRef.on('child_added', onUserItemsChildAdded);
-
-    const onUserItemsChildRemoved = (data) => {
-      // prevent 'value' event from being triggered
-      firebase.database().ref('/items/' + data.val()).off();
-      firebase.database().ref('/items/' + data.val()).remove();
-
-      // TODO replace with seperate listener for 'value' events on user's items list
-      // trigger rerender without deleted item
-      setTodoItems(prevState => [...prevState].filter((item) => item.key !== data.val()));
-    }
     userItemsDBRef.on('child_removed', onUserItemsChildRemoved);
 
-    const onItemValue = (data) => {
-      setTodoItems(prevState => [...prevState].map((item) => item.key === data.key ? data : item));
-    }
-
     return (() => {
-      // TODO clean up 'value' event listeners
       userItemsDBRef.off('child_added', onUserItemsChildAdded);
+      userItemsDBRef.off('child_removed', onUserItemsChildRemoved);
     });
   }, [auth.user.uid]);
 
@@ -73,32 +76,6 @@ function TodoList(props) {
   );
 }
 
-function TodoItem(props) {
-  function handleCompleteButtonClick() {
-    const itemDBRef = firebase.database().ref('/items/' + props.item.key);
-    const newItem = {
-      title: props.item.val().title,
-      complete: !props.item.val().complete,
-      user: props.item.val().user
-    }
-    itemDBRef.set(newItem);
-  }
-
-  return (
-    <li>
-      <div className={props.className}>
-        <button className="form-button" onClick={() => handleCompleteButtonClick()}>
-          <FontAwesomeIcon icon={faCheck}
-                           className={props.item.val().complete ?
-                             'todo-button-icon-complete' : 'todo-button-icon'}/>
-        </button>
-        <div className={props.item.val().complete ? 'todo-item-title todo-item-title-complete'
-          : 'todo-item-title'}>{props.item.val().title}</div>
-      </div>
-    </li>
-  );
-}
-
 function AddTodo(props) {
   const [newItemTitle, setNewItemTitle] = useState('');
 
@@ -106,20 +83,17 @@ function AddTodo(props) {
 
   function submitNewTodo(value) {
     // add the item
-    const itemsDBRef = firebase.database().ref('/items').push();
+    const itemsDBRef = firebase.database().ref('/items/').push();
     itemsDBRef.set({
       title: newItemTitle,
       user: auth.user.uid,
       complete: false
-    });
-
-    // add item to users list
-    const userDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items');
-    userDBRef.once('value').then((items) => {
-      items.exists() ?
-        userDBRef.set([...items.val(), itemsDBRef.key])
-        : userDBRef.set([itemsDBRef.key]);
-      setNewItemTitle('')
+    }).then(() => {
+      const userItemsDBRef = firebase.database()
+        .ref('/users/' + auth.user.uid + '/items/');
+      userItemsDBRef.once('value')
+        .then(items => items.exists() ? userItemsDBRef.set([...items.val(), itemsDBRef.key])
+          : userItemsDBRef.set([itemsDBRef.key]));
     });
   }
 
