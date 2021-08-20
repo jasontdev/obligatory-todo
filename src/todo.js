@@ -3,9 +3,8 @@ import {useAuth} from "./auth";
 import firebase from "firebase/app";
 import "firebase/database";
 import {Redirect, Route} from "react-router-dom";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {TodoItem} from "./todoItem";
+import {AddTodo} from "./addtodo";
 
 function Todo(props) {
   const auth = useAuth();
@@ -15,7 +14,7 @@ function Todo(props) {
       {auth.user ?
         <div>
           <h1>Todo</h1>
-          <TodoList />
+          <TodoItems />
           <AddTodo/>
         </div>
         :
@@ -25,12 +24,19 @@ function Todo(props) {
   );
 }
 
-function TodoList(props) {
+function TodoItems(props) {
   const [todoItems, setTodoItems] = useState([]);
   const auth = useAuth();
 
   useEffect(() => {
-    const renderItem = (newItem) => {
+    const renderItem = (dbItem) => {
+      const newItem = {
+        key: dbItem.key,
+        val: function() {
+          return (dbItem.val());
+        }
+      }
+
       setTodoItems(prevState => {
         const matchingIndex = prevState.findIndex((prevItem) => prevItem.key === newItem.key);
 
@@ -72,42 +78,6 @@ function TodoList(props) {
                                            className={item.val().complete ?
                                              "todo-item todo-item-complete" : "todo-item"}/>)}
       </ul>
-    </div>
-  );
-}
-
-function AddTodo(props) {
-  const [newItemTitle, setNewItemTitle] = useState('');
-
-  const auth = useAuth();
-
-  function submitNewTodo(value) {
-    // add the item
-    const itemsDBRef = firebase.database().ref('/items/').push();
-    itemsDBRef.set({
-      title: newItemTitle,
-      user: auth.user.uid,
-      complete: false
-    }).then(() => {
-      const userItemsDBRef = firebase.database()
-        .ref('/users/' + auth.user.uid + '/items/');
-      userItemsDBRef.once('value')
-        .then(items => items.exists() ? userItemsDBRef.set([...items.val(), itemsDBRef.key])
-          : userItemsDBRef.set([itemsDBRef.key]));
-    });
-  }
-
-  return (
-    <div className="form-box">
-      <div className="form-box-row">
-        <input type="text" placeholder="New to-do item" value={newItemTitle}
-               onChange={(e) => setNewItemTitle(e.target.value)}/>
-      </div>
-      <button className="form-button"
-              onClick={(e) => submitNewTodo()}><FontAwesomeIcon icon={faPlus}/> ADD
-      </button>
-      <div className="form-box-row">
-      </div>
     </div>
   );
 }
