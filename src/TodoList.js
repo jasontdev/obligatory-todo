@@ -9,7 +9,6 @@ function TodoList(props) {
   const auth = useAuth();
 
   function renderItem(item) {
-    console.log('item: ' + item.val())
     setItems(prevState => [...prevState, item]);
   }
 
