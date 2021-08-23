@@ -9,7 +9,7 @@ import {
 import {Login} from './login';
 import {Register} from './register';
 import {Todo} from './todo';
-import {ProvideAuth, useAuth} from "./auth";
+import {AuthorizedRoute, ProvideAuth, useAuth} from "./auth";
 import React from "react";
 
 function App() {
@@ -31,9 +31,9 @@ function App() {
               <Route exact path="/register">
                 <Register/>
               </Route>
-              <Route exact path="/todo">
+              <AuthorizedRoute exact path="/todo">
                 <Todo/>
-              </Route>
+              </AuthorizedRoute>
             </Switch>
           </div>
         </div>

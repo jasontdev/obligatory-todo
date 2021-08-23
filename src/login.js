@@ -18,24 +18,19 @@ function LoginBox(props) {
   const auth = useAuth();
 
   return (
-      <Route exact path="/login">
-        { auth.user ?
-          <Redirect to='/todo' />
-          :
-          <div className="form-box">
-            <div className="form-box-row">
-              <input type="text" placeholder="Username" value={username}
-                     onChange={(e) => setUsername(e.target.value)}/>
-            </div>
-            <div className="form-box-row">
-              <input type="password" placeholder="Password" value={password}
-                     onChange={(e) => setPassword(e.target.value)}/>
-            </div>
-            <div className="form-box-row">
-              <button className="form-button" onClick={() => auth.signIn(username, password)}>LOGIN</button>
-            </div>
-          </div>}
-      </Route>
+    <div className="form-box">
+      <div className="form-box-row">
+        <input type="text" placeholder="Username" value={username}
+               onChange={(e) => setUsername(e.target.value)}/>
+      </div>
+      <div className="form-box-row">
+        <input type="password" placeholder="Password" value={password}
+               onChange={(e) => setPassword(e.target.value)}/>
+      </div>
+      <div className="form-box-row">
+        <button className="form-button" onClick={() => auth.signIn(username, password)}>LOGIN</button>
+      </div>
+    </div>
   );
 }
 

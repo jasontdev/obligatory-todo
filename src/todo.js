@@ -2,29 +2,20 @@ import {useEffect, useState} from "react";
 import {useAuth} from "./auth";
 import firebase from "firebase/app";
 import "firebase/database";
-import {Redirect, Route} from "react-router-dom";
 import {TodoItem} from "./todoItem";
 import {AddTodo} from "./addtodo";
 
 function Todo(props) {
-  const auth = useAuth();
-
   return (
-    <Route>
-      {auth.user ?
-        <div>
-          <h1>Todo</h1>
-          <TodoItems />
-          <AddTodo/>
-        </div>
-        :
-        <Redirect to="/login"/>
-      }
-    </Route>
+    <div>
+      <h1>Todo</h1>
+      <TodoItems/>
+      <AddTodo/>
+    </div>
   );
 }
 
-function TodoItems(props) {
+export function TodoItems(props) {
   const [todoItems, setTodoItems] = useState([]);
   const auth = useAuth();
 
@@ -32,7 +23,7 @@ function TodoItems(props) {
     const renderItem = (dbItem) => {
       const newItem = {
         key: dbItem.key,
-        val: function() {
+        val: function () {
           return (dbItem.val());
         }
       }
@@ -40,7 +31,7 @@ function TodoItems(props) {
       setTodoItems(prevState => {
         const matchingIndex = prevState.findIndex((prevItem) => prevItem.key === newItem.key);
 
-        if(matchingIndex > -1) {
+        if (matchingIndex > -1) {
           const newState = [...prevState];
           newState.splice(matchingIndex, 1, newItem);
           return newState;
