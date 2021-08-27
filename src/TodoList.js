@@ -4,21 +4,21 @@ import Todo from "./Todo";
 import NewTodo from "./NewTodo";
 import {useAuth} from "./AuthProvider";
 
-// TODO unit test
+// TODO unit test for weird cases
 export function updateOrAddItem(prevState, item) {
-    const prevIndex = prevState.findIndex((prevItem) => prevItem.key === item.key);
-    if(prevIndex > -1) {
-      const newState = [...prevState];
-      newState.splice(prevIndex, 1, item);
-      return newState;
-    } else {
-      return [...prevState, item];
-    }
+  const prevIndex = prevState.findIndex((prevItem) => prevItem.key === item.key);
+  if (prevIndex > -1) {
+    const newState = [...prevState];
+    newState.splice(prevIndex, 1, item);
+    return newState;
+  } else {
+    return [...prevState, item];
+  }
 }
 
-// TODO unit test
+// TODO unit test for weird cases
 export function removeItem(prevState, item) {
-  return prevState.filter((prevItem) => prevItem.key !== item.val());
+  return prevState.filter((prevItem) => prevItem.key !== item);
 }
 
 function TodoList(props) {
@@ -28,30 +28,33 @@ function TodoList(props) {
   // TODO testing these hooks will require mocking firebase.database()
   useEffect(() => {
     const userItemsDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items');
-    const onUserItemsChildAdded = (item) => {
-      const itemDBRef = firebase.database().ref('/items/' + item.val());
+    const onUserItemsChildAdded = (data, prevKey) => {
+      const itemDBRef = firebase.database().ref('/items/' + data.val().itemId);
       itemDBRef.on('value',
-          item => setItems( prevState => updateOrAddItem(prevState, item)));
+        (item) => {
+          // item will have a lot of Firebase related cruft so let's create a new item
+          // with just the info the app needs
+          const newItem = { key: item.key, val: item.val()};
+          setItems(prevState => updateOrAddItem(prevState, newItem));
+        });
     }
-    userItemsDBRef.on('child_added',onUserItemsChildAdded);
+    userItemsDBRef.on('child_added', onUserItemsChildAdded);
 
-    const onUserItemsChildRemoved = (item) => {
-      const itemDBRef = firebase.database().ref('/items' + item.val());
-      itemDBRef.off('value', updateOrAddItem);
-      setItems(prevState => removeItem(prevState, item));
-    }
-    userItemsDBRef.on('child_removed', onUserItemsChildRemoved);
+    userItemsDBRef.on('child_removed', (item) => {
+      const itemsDBRef = firebase.database().ref('/items/' + item.val());
+      itemsDBRef.off('value');
+      setItems(prevState => removeItem(prevState, item.val()));
+    })
 
     return (() => {
       userItemsDBRef.off('child_added', onUserItemsChildAdded);
-      userItemsDBRef.off('child_removed', onUserItemsChildRemoved);
     });
-  },[auth.user.uid]);
+  }, [auth.user.uid]);
   return (
-    <div>
-      <ul>
-        {items.map((item) => <li><Todo item={item} /></li>)}
-        <li><NewTodo /></li>
+    <div className="todo-list">
+      <ul className="todo-list-ul">
+        {items.map((item) => <li><Todo item={item}/></li>)}
+        <li><NewTodo/></li>
       </ul>
     </div>
   );

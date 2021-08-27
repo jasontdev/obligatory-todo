@@ -1,0 +1,26 @@
+.todo {
+    border-style: solid;
+    border-radius: 5px;
+    border-color: lightgrey;
+    padding: 5px;
+}
+
+.todo-list-ul {
+    list-style: none;
+}
+
+.todo-item-complete-icon {
+    color: grey;
+}
+
+.todo-item-complete-icon-complete {
+    color: red;
+}
+
+.todo-item-complete-button {
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    background-color: white;
+    border-radius: 5px;
+}
