@@ -17,12 +17,12 @@ function Login(props) {
 
   return (
     <div>
-      <h3>Login</h3>
-      <input id="username" type="email" placeholder="Username" value={username}
+      <h2>Login</h2>
+      <input id="username" className="text-input" type="email" placeholder="Username" value={username}
              onChange={e => setUsername(e.target.value)}/>
-      <input id="password" type="password" placeholder="Password" value={password}
+      <input id="password" className="text-input" type="password" placeholder="Password" value={password}
              onChange={e => setPassword(e.target.value)}/>
-      <button onClick={handleLoginClick}>Login</button>
+      <button className="button" onClick={handleLoginClick}>LOGIN</button>
     </div>
   );
 }

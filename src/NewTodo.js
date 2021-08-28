@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import firebase from "firebase/app";
 import {useAuth} from "./AuthProvider";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function NewTodo(props) {
   const auth = useAuth();
@@ -48,9 +50,18 @@ function NewTodo(props) {
   }
 
   return (
-    <div className="todo">
-      <input type="text" value={newTitle} onChange={onInputChange}/>
-      <button onClick={handleClick}>Add</button>
+    <div className="todo-item">
+      <div className="todo-item-row centered">
+        <div className="todo-item-col">
+          <input className="text-input" type="text"
+                 value={newTitle}
+                 onChange={onInputChange}
+                 placeholder="New todo..."/>
+          <button className="button" onClick={handleClick}>
+            <FontAwesomeIcon icon={faPlus}/>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

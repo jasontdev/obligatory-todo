@@ -1,5 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
 body {
     margin: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-family: 'Open Sans', 'sans-serif';
+}
+
+:is(h1, h2, h3, h4, h5, h6) {
+    font-family: 'Roboto', 'sans-serif';
 }

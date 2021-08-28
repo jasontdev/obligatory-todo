@@ -28,7 +28,7 @@ function Todo(props) {
           <div className="todo-item-title">{props.item.val.title}</div>
         </div>
         <div className="todo-item-col">
-          <button onClick={handleChevronClick}><FontAwesomeIcon icon={faChevronDown} /></button>
+          <button className="button button-secondary" onClick={handleChevronClick}><FontAwesomeIcon icon={faChevronDown} /></button>
         </div>
       </div>
       {pulldown ? <div className="todo-item-row">Here is the second row.</div> : <div />}
