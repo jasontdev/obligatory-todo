@@ -52,6 +52,7 @@ function TodoList(props) {
   }, [auth.user.uid]);
   return (
     <div className="todo-list">
+      <h3>Todo</h3>
       <ul className="todo-list-ul">
         {items.map((item) => <li><Todo item={item}/></li>)}
         <li><NewTodo/></li>

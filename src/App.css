@@ -1,11 +1,49 @@
-.todo {
+.App {
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+    align-items: center;
+}
+
+.container {
+    min-width: 350px;
+    max-width: 600px;
+}
+
+.navbar {
+    display: flex;
+    background-color: black;
+    color: white;
+    width: 100%;
+}
+
+.navbar-brand {
+    padding: 5px;
+}
+
+.todo-item {
     border-style: solid;
     border-radius: 5px;
+    border-width: 1px;
     border-color: lightgrey;
     padding: 5px;
 }
 
+.todo-item-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.todo-item-col {
+    display: flex;
+    align-items: start;
+}
+
+.todo-list {
+}
+
 .todo-list-ul {
+    padding: 0;
     list-style: none;
 }
 
@@ -23,4 +61,8 @@
     border-width: 2px;
     background-color: white;
     border-radius: 5px;
+}
+
+.todo-item-title {
+    margin: 0 5px 0 5px;
 }
