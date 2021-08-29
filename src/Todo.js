@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck, faChevronDown} from "@fortawesome/free-solid-svg-icons";
 import firebase from "firebase/app";
+import TodoOptions from "./TodoOptions";
 
 function Todo(props) {
   const [pulldown, setPulldown] = useState(false);
@@ -31,7 +32,7 @@ function Todo(props) {
           <button className="button button-secondary" onClick={handleChevronClick}><FontAwesomeIcon icon={faChevronDown} /></button>
         </div>
       </div>
-      {pulldown ? <div className="todo-item-row">Here is the second row.</div> : <div />}
+      {pulldown ? <div className="todo-item-row centered"><TodoOptions /></div> : <div />}
     </div>
   );
 }
