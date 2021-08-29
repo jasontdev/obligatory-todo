@@ -1,4 +1,4 @@
-import './App.css';
+import './styles.css';
 import TodoList from "./TodoList";
 import AuthProvider from "./AuthProvider";
 import Login from "./Login";
