@@ -7,13 +7,27 @@
 .container {
     min-width: 350px;
     max-width: 600px;
+    padding: 0 10px 0 10px;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flex-column-item {
+    margin-bottom: 5px;
 }
 
 .navbar {
     display: flex;
-    background-color: black;
+    justify-content: space-between;
+    align-items: center;
+    background-color: darkslateblue;
     color: white;
     width: 100%;
+    font-family: 'Roboto', 'sans-serif';
 }
 
 .navbar-brand {
@@ -40,6 +54,7 @@
 }
 
 .todo-list {
+    font-family: 'Roboto', 'sans-serif';
 }
 
 .todo-list-ul {
@@ -49,6 +64,14 @@
 
 .todo-item-complete-icon {
     color: grey;
+}
+
+.new-todo-input {
+    width: 325px;
+}
+
+.ml-mr-5 {
+    margin: 0 5px 0 5px;
 }
 
 .todo-item-complete-icon-complete {
@@ -98,4 +121,14 @@
 }
 
 .todo-item-options {
+}
+
+.navbar-nav {
+
+}
+
+.navbar-nav-item>a {
+    color: white;
+    text-decoration: none;
+    padding: 0 5px 0 5px;
 }

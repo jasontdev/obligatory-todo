@@ -9,27 +9,26 @@ function NewTodo(props) {
   const [newTitle, setNewTitle] = useState('');
 
   function handleClick() {
-    const newItem = {title: newTitle, user: auth.user.uid, complete: false};
-    const newItemDBRef = firebase.database().ref('/items/').push();
     const userItemsDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items/');
 
-    // TODO we need to handle condition no item list exists
-    newItemDBRef.set(newItem).then(() => {
-        // fetch the last item/highest index in the list
-        userItemsDBRef.orderByChild('/index').limitToLast(1).once('value')
-          .then((data) => {
-              // key added to the end of the list should have an index higher than current
-              // TODO explore database transaction support to mitigate concurrency issue
-              const newItemIndex = maxIndex(data);
-              if (newItemIndex) {
-                addToItemKeyList(userItemsDBRef, newItemIndex + 1, newItemDBRef.key);
-              } else {
-                addToItemKeyList(userItemsDBRef, 0, newItemDBRef.key)
-              }
-            }
-          );
-      }
-    );
+    // fetch the last item/highest index in the list
+    userItemsDBRef.orderByChild('/index').limitToLast(1).once('value')
+      .then((data) => {
+        const newUserItemDBRef = userItemsDBRef.push();
+          const newItem = {title: newTitle, user: auth.user.uid,
+            complete: false, itemListId: newUserItemDBRef.key };
+          const newItemDBRef = firebase.database().ref('/items/').push();
+          newItemDBRef.set(newItem);
+          // key added to the end of the list should have an index higher than current
+          // TODO explore database transaction support to mitigate concurrency issue
+          const newItemIndex = maxIndex(data);
+          if (newItemIndex) {
+            addToItemKeyList(newUserItemDBRef, newItemIndex + 1, newItemDBRef.key);
+          } else {
+            addToItemKeyList(newUserItemDBRef, 0, newItemDBRef.key)
+          }
+        }
+      );
 
     // find highest index value in a snapshot of items
     const maxIndex = (data) => {
@@ -39,7 +38,7 @@ function NewTodo(props) {
     }
 
     const addToItemKeyList = (itemListDBRef, index, key) => {
-      itemListDBRef.push().set({index: index, itemId: key});
+      itemListDBRef.set({index: index, itemId: key});
     }
 
     setNewTitle('');
@@ -52,14 +51,20 @@ function NewTodo(props) {
   return (
     <div className="todo-item">
       <div className="todo-item-row centered">
-        <div className="todo-item-col">
-          <input className="text-input" type="text"
+        <div className="flex-column">
+          <input className="text-input new-todo-input flex-column-item" type="text"
                  value={newTitle}
                  onChange={onInputChange}
                  placeholder="New todo..."/>
-          <button className="button" onClick={handleClick}>
-            <FontAwesomeIcon icon={faPlus}/>
-          </button>
+          <div>
+            <button className="button ml-mr-5" onClick={handleClick}>
+              ADD
+            </button>
+            <button className="button ml-mr-5" onClick={() => setNewTitle('')}>
+              CANCEL
+            </button>
+          </div>
+
         </div>
       </div>
     </div>

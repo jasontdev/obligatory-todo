@@ -41,9 +41,9 @@ function TodoList(props) {
     userItemsDBRef.on('child_added', onUserItemsChildAdded);
 
     userItemsDBRef.on('child_removed', (item) => {
-      const itemsDBRef = firebase.database().ref('/items/' + item.val());
+      const itemsDBRef = firebase.database().ref('/items/' + item.val().itemId);
       itemsDBRef.off('value');
-      setItems(prevState => removeItem(prevState, item.val()));
+      setItems(prevState => removeItem(prevState, item.val().itemId));
     })
 
     return (() => {
@@ -52,9 +52,9 @@ function TodoList(props) {
   }, [auth.user.uid]);
   return (
     <div className="todo-list">
-      <h2>Todo</h2>
+      <h2>Todo list</h2>
       <ul className="todo-list-ul">
-        {items.map((item) => <li><Todo item={item}/></li>)}
+        {items.map((item) => <li><Todo item={item} /></li>)}
         <li><NewTodo/></li>
       </ul>
     </div>

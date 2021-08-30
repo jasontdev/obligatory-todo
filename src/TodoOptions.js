@@ -1,8 +1,18 @@
 import React from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowDown, faArrowUp, faPen, faTrash} from "@fortawesome/free-solid-svg-icons";
+import firebase from "firebase/app";
+import {useAuth} from "./AuthProvider";
 
 function TodoOptions(props) {
+  const auth = useAuth();
+
+  function onClickTrash() {
+    const userItemsDBRef = firebase.database()
+      .ref('/users/' + auth.user.uid + '/items/' + props.item.val.itemListId);
+    userItemsDBRef.remove().then(() => console.log('item removed'));
+  }
+
   return (
     <div className="todo-item-options">
       <button className="button button-secondary">
@@ -14,7 +24,8 @@ function TodoOptions(props) {
       <button className="button button-secondary">
         <FontAwesomeIcon icon={faPen}/>
       </button>
-      <button className="button button-secondary">
+      <button className="button button-secondary"
+      onClick={onClickTrash}>
         <FontAwesomeIcon icon={faTrash}/>
       </button>
     </div>

@@ -32,7 +32,7 @@ function Todo(props) {
           <button className="button button-secondary" onClick={handleChevronClick}><FontAwesomeIcon icon={faChevronDown} /></button>
         </div>
       </div>
-      {pulldown ? <div className="todo-item-row centered"><TodoOptions /></div> : <div />}
+      {pulldown ? <div className="todo-item-row centered"><TodoOptions item={props.item}/></div> : <div />}
     </div>
   );
 }
