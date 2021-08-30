@@ -9,38 +9,15 @@ function NewTodo(props) {
   const [newTitle, setNewTitle] = useState('');
 
   function handleClick() {
-    const userItemsDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items/');
-
-    // fetch the last item/highest index in the list
-    userItemsDBRef.orderByChild('/index').limitToLast(1).once('value')
-      .then((data) => {
-        const newUserItemDBRef = userItemsDBRef.push();
-          const newItem = {title: newTitle, user: auth.user.uid,
-            complete: false, itemListId: newUserItemDBRef.key };
-          const newItemDBRef = firebase.database().ref('/items/').push();
-          newItemDBRef.set(newItem);
-          // key added to the end of the list should have an index higher than current
-          // TODO explore database transaction support to mitigate concurrency issue
-          const newItemIndex = maxIndex(data);
-          if (newItemIndex) {
-            addToItemKeyList(newUserItemDBRef, newItemIndex + 1, newItemDBRef.key);
-          } else {
-            addToItemKeyList(newUserItemDBRef, 0, newItemDBRef.key)
-          }
-        }
-      );
-
-    // find highest index value in a snapshot of items
-    const maxIndex = (data) => {
-      let max;
-      data.forEach((item) => max = item.val().index);
-      return max;
-    }
-
-    const addToItemKeyList = (itemListDBRef, index, key) => {
-      itemListDBRef.set({index: index, itemId: key});
-    }
-
+    const itemsDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items/').push();
+    // TODO find new index first
+    let maxIndex = 0;
+    itemsDBRef.limitToLast(1).once('value', (data) => {
+      if(data.exists()) {
+        data.forEach((item) => maxIndex = item.val().index);
+      }
+    });
+    itemsDBRef.set( { title: newTitle, complete: false, index: maxIndex + 1});
     setNewTitle('');
   }
 

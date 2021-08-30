@@ -18,7 +18,7 @@ export function updateOrAddItem(prevState, item) {
 
 // TODO unit test for weird cases
 export function removeItem(prevState, item) {
-  return prevState.filter((prevItem) => prevItem.key !== item);
+  return prevState.filter((prevItem) => prevItem.key !== item.key);
 }
 
 function TodoList(props) {
@@ -27,34 +27,28 @@ function TodoList(props) {
 
   // TODO testing these hooks will require mocking firebase.database()
   useEffect(() => {
-    const userItemsDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items');
-    const onUserItemsChildAdded = (data, prevKey) => {
-      const itemDBRef = firebase.database().ref('/items/' + data.val().itemId);
-      itemDBRef.on('value',
-        (item) => {
-          // item will have a lot of Firebase related cruft so let's create a new item
-          // with just the info the app needs
-          const newItem = { key: item.key, val: item.val()};
-          setItems(prevState => updateOrAddItem(prevState, newItem));
-        });
+    const onItemsChildAdded = (data) => {
+      setItems(prevState => updateOrAddItem(prevState, data))
     }
-    userItemsDBRef.on('child_added', onUserItemsChildAdded);
+    const itemsDBRef = firebase.database().ref('/users/' + auth.user.uid + '/items/');
+    itemsDBRef.on('child_added', onItemsChildAdded);
 
-    userItemsDBRef.on('child_removed', (item) => {
-      const itemsDBRef = firebase.database().ref('/items/' + item.val().itemId);
-      itemsDBRef.off('value');
-      setItems(prevState => removeItem(prevState, item.val().itemId));
-    })
+    const onItemsChildChanged = (data) => {
+      setItems(prevState => updateOrAddItem(prevState, data));
+    }
+    itemsDBRef.on('child_changed', onItemsChildChanged);
 
-    return (() => {
-      userItemsDBRef.off('child_added', onUserItemsChildAdded);
-    });
+    const onItemsChildRemoved = (data) => {
+      setItems(prevState => removeItem(prevState, data));
+    }
+    itemsDBRef.on('child_removed', onItemsChildRemoved)
   }, [auth.user.uid]);
+
   return (
     <div className="todo-list">
       <h2>Todo list</h2>
       <ul className="todo-list-ul">
-        {items.map((item) => <li><Todo item={item} /></li>)}
+        {items.map((item) => <li><Todo item={item} key={item.key}/></li>)}
         <li><NewTodo/></li>
       </ul>
     </div>

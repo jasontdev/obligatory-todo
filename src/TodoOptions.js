@@ -9,8 +9,8 @@ function TodoOptions(props) {
 
   function onClickTrash() {
     const userItemsDBRef = firebase.database()
-      .ref('/users/' + auth.user.uid + '/items/' + props.item.val.itemListId);
-    userItemsDBRef.remove().then(() => console.log('item removed'));
+      .ref('/users/' + auth.user.uid + '/items/' + props.item.key);
+    userItemsDBRef.remove();
   }
 
   return (
