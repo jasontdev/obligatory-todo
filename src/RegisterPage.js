@@ -5,8 +5,11 @@ function RegisterPage(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  // TODO handle success/fail of registration. Show error or redirect to login
   const onButtonClick = function registerUserWithFirebase() {
-    firebase.auth().createUserWithEmailAndPassword(username, password);
+    firebase.auth().createUserWithEmailAndPassword(username, password)
+      .then(() => console.log('Registration successful.'))
+      .catch(() => console.log('Registration failed.'));
   }
 
   return (

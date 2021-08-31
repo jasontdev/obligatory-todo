@@ -8,6 +8,7 @@ import {BrowserRouter, Route, Router, Switch} from "react-router-dom";
 import React from 'react';
 import Landing from "./Landing";
 import RegisterPage from "./RegisterPage";
+import Logout from "./Logout";
 
 function App() {
   document.title = 'Obligatory Todo';
@@ -30,6 +31,9 @@ function App() {
               </Route>
               <Route path="/todos">
                 <TodoList />
+              </Route>
+              <Route path="/logout">
+                <Logout />
               </Route>
             </Switch>
           </div>
