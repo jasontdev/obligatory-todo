@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useAuth} from "./AuthProvider";
 import firebase from "firebase/app";
 import {Redirect} from "react-router-dom";
@@ -8,12 +8,23 @@ function Logout(props) {
   const auth = useAuth();
 
   const onClickYes = function SignOutUser() {
-    firebase.auth().signOut().then(r => setRoute('landing'));
+    // sign out responded to by AuthState observer established
+    // in useEffect() call below
+    firebase.auth().signOut();
   }
 
   const onClickNo = function routeToTodos() {
     setRoute('todos');
   }
+
+  useEffect(() => {
+    // observer only fires when auth state changes
+    firebase.auth().onAuthStateChanged((user) => {
+      if(!user) {
+        setRoute('landing');
+      }
+    })
+  })
 
   switch (route) {
     case 'todos':

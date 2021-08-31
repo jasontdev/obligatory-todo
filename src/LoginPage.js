@@ -18,6 +18,7 @@ function LoginPage(props) {
       .catch(() => console.log('Error logging in to firebase'));
   }
 
+  
   useEffect(() => {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
